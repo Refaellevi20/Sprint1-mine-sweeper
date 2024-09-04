@@ -6,53 +6,83 @@
 const BOOM = '💣'
 const FLAG = '⛳'
 
+//* levels of the game 
+const levels = {
+   4: { size: 4, mines: 2 },
+    8: { size: 8, mines: 14 },
+    12: { size: 12, mines: 32 }
+}
+
 var gBoard
 var gBoomCount = 0
 var gIntervalAdjacentMines
+var timerInterval
+var startTime
+var gGameOver = false 
+// var life = 0
 
 //* active the function from the html
 function onInitGame() {
-    gBoard = buildBoard()
-//* running on 2 mines
-    for (var d = 0; d < 2; d++) {
-    const   locations = boomRandomLocations()
+
+    gScore = 0
+   // updateScore(1)
+
+   //* element in your HTML is used to allow the user to choose a difficulty level ( Beginner, Medium, Expert)
+   //* property retrieves the current value of the selected option in the select
+   //* in anther word  This value corresponds to the difficulty level selected by the user
+    const selectedSize = parseInt(document.querySelector('select').value)
+    gBoard = buildBoard(selectedSize)
     
-        gBoard[locations.i][locations.j].mine = true
-    
-        // If mine is already placed, retry
-    }
+//* each difficulty level to a specific board size and number of mines
+    placeMines(levels[selectedSize].mines)
     setMinesNegsCount(gBoard)
     renderBoard(gBoard)
+    stopTimer() 
 }
 
 
-function buildBoard() {
+function placeMines(minesCount) {
+    var placedMines = 0
+    while (placedMines < minesCount) {
+        const locations = boomRandomLocations()
+        const cell = gBoard[locations.i][locations.j]
+        if (!cell.mine) {
+            cell.mine = true
+            placedMines++
+        }
+    }
+}
+
+
+
+function buildBoard(size) {
     const board = []
-    //* Build the 4x4 board with empty strings
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < size; i++) {
         board[i] = []
-        for (var j = 0; j < 4; j++) {
+        for (var j = 0; j < size; j++) {
             board[i][j] = {
                 mine: false,
                 adjacentMines: 0,
                 revealed: false,
-                flagged: false 
+                flagged: false
             }
         }
     }
+    console.log(board)
+    
     return board
 }
 
 function boomRandomLocations() {
     //* random location for thr mines
     //* i choosed  Math.floor(Math.random() not using a lot of code like getRandomIT (i like this one)
-    const locations = {
-        i: Math.floor(Math.random() * 4),
-        j: Math.floor(Math.random() * 4)
+    const size = gBoard.length
+    return {
+        i: Math.floor(Math.random() * size),
+        j: Math.floor(Math.random() * size)
     }
-    console.log(locations)
-    return locations
 }
+
 
 function renderBoard(board) {
     //* Initializes an empty string strHtml
@@ -81,17 +111,17 @@ function renderBoard(board) {
         strHtml += '</tr>'
     }
     //* Select the tbody element with class "game-board" and set its innerHTML
-    const gameBoard = document.querySelector('.game-board')
-    gameBoard.innerHTML = strHtml
+    const elGameBoard = document.querySelector('.game-board')
+    elGameBoard.innerHTML = strHtml
 }
 
 
 //* location is an object like this - { i: 2, j: 7 }
-function renderCell(location, value) {
-    //* Select the elCell and set the value
-    const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
-    elCell.innerHTML = value
-}
+// function renderCell(location, value) {
+//     //* Select the elCell and set the value
+//     const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
+//     elCell.innerHTML = value
+// }
 
 // 
 
@@ -119,7 +149,7 @@ function setMinesNegsCount(board) {
 //* and ofc not including the place i clicked
 //* continue meaning skip/jump 
 function countNeighbors(row, col, board) {
-    var mineCount = 0;
+    var mineCount = 0
     for (var i = row - 1; i <= row + 1; i++) {
         if (i < 0 || i >= board.length) continue
         for (var j = col - 1; j <= col + 1; j++) {
@@ -130,76 +160,56 @@ function countNeighbors(row, col, board) {
     }
     return mineCount
 }
-
-//* same as elCell
-//* make no difference then Cell
-
-//* on the left click
-//* and showing the boom or the numbers or the empty cells
-function onCellClicked(event, i, j) {
+//* the score does not work yet
+function onCellClicked(event,i, j) {
     const cell = gBoard[i][j]
-
-  
     if (cell.revealed || cell.flagged) return
-
+    updateScore(1)
+    startTimer()
     cell.revealed = true
-
-    if (cell.mine) {
+    if (cell.mine) { 
         revealAllMines()
-        gameOver(false)
+            gameOver(false)
+              
     } else {
         renderBoard(gBoard)
         if (checkVictory()) {
             gameOver(true)
+            stopTimer()
         }
     }
 }
-
-
-//* on the right click
-//* Toggle the flag on a cell
+//* for the flag Right clicked 
 function onCellRightClicked(event, i, j) {
-    event.preventDefault() 
-    //* Prevent default context menu
+    event.preventDefault()
     const cell = gBoard[i][j]
-
-   if (cell.revealed) return
-
-   cell.flagged = !cell.flagged 
-  console.log(gBoard[i][j])
-  
+    if (cell.revealed) return
+    cell.flagged = !cell.flagged
     renderBoard(gBoard)
 }
-
-
+//* the game is finish when 
 function gameOver(isWin) {
-    clearInterval(gIntervalAdjacentMines)
-   
+    gGameOver = true 
+    clearInterval(timerInterval)
+    stopTimer() 
     if (isWin) {
         alert('Victorious!')
     } else {
         alert('Game over! You lost.')
     }
 }
-    
-
-
-
-
+//* check victory if i won by finding all the mines
+//* means i open all the cell except mine and empty cells
 function checkVictory() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[i].length; j++) {
             const cell = gBoard[i][j]
-           if((cell.mine && !cell.flagged) || (!cell.mine && !cell.revealed)) return false
-           
-           }
-             }
-                return true
-            }
-        
-
-//* Reveal all mines on game over
-//* if i clicked on one mine all revealed
+            if ((cell.mine && !cell.flagged) || (!cell.mine && !cell.revealed)) return false
+        }
+    }
+    return true
+}
+//* if i hit one mine i can see all the mine and i also lost
 function revealAllMines() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[i].length; j++) {
@@ -210,26 +220,33 @@ function revealAllMines() {
     }
     renderBoard(gBoard)
 }
-
-
+//* starting a new game
 function onRestart() {
-    const modal = document.querySelector('.Restart')
-    modal.classList.add('hidden')
-    document.querySelector('.Restart').innerText = '😒'
+    stopTimer()
     onInitGame()
+}
+//* time
+function startTimer() {
+    if (timerInterval) return
+    const startTime = Date.now()
+    timerInterval = setInterval(() => {
+        const elapsedTime = Date.now() - startTime
+        const seconds = Math.floor(elapsedTime / 1000)
+        const milliseconds = elapsedTime % 1000
+        document.getElementById('timer').innerText = `Timer: ${seconds} : ${milliseconds.toString().padStart(3, '0')}`
+    }, 10)
+}
+
+//* after i win or lose
+function stopTimer() {
+    clearInterval(timerInterval)
+    timerInterval = null  
 }
 
 
-
-
-
-
-
-
-
-
-
-
+function updateScore(score) {
+    document.querySelector('.score').innerText = score
+}
 
 //////////////////////////////////////////////////  //! don't mind (down)
 

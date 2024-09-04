@@ -1,27 +1,31 @@
 
 <html>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playing with god of games</title>
+    <title>Minesweeper</title>
     <link rel="stylesheet" href="main.css">
 </head>
 
-<body onload="onInitGame()" >
+<body onload="onInitGame()">
     <h1>Minesweeper</h1>
-   
-    <div class="style" style="color: aqua;"></div>
-    <h2>Score: <span class="score">0</span></h2>
+    <h2 class="score">0</h2>
     <table class="center">
         <tbody class="game-board"></tbody>
     </table>
-    
-    <button class="Restart" onclick="onInitGame()">Restart</button>
+    <select onchange="onChangeDifficulty(this)">
+        <option value="4">Beginner</option>
+        <option value="8">Medium</option>
+        <option value="12">Expert</option>
+    </select>
+    <div class="timer" id="timer">Timer: 00 : 000</div>
+    <button class="Restart" onclick="onRestart()">Restart</button>
     <button class="flag">⛳</button>
     <script src="table.js"></script>
+    <script src="util.js"></script>
 </body>
 
 </html>
 
-<!-- onclick="onCellRightClicked(event, this.i, this.j) -->
+
+

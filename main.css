@@ -1,0 +1,46 @@
+
+body{
+  
+    margin: auto;
+    
+}
+
+h1{
+    text-align: center;
+}
+.center {
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+td {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+    transition: background-color 0.3s ease; /* transition effect only on background-color (for now maybe)*/
+    text-align: center; 
+     vertical-align: middle; /*the boom in the middle of the matrix */
+    font-size: 24px; 
+}
+
+td:hover {
+    background-color: gray; /* color on hover */
+    /* cursor: not-allowed; */
+    cursor: pointer;
+}
+
+.revealed{
+    background-color: aqua;
+}
+
+.selected {
+    background-color: orange;
+}
+
+
+.flag{
+    padding: 0px;
+    width: 50px;
+    text-align: center;
+    transition: 1s;
+}

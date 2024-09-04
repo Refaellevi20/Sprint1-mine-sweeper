@@ -1,0 +1,27 @@
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playing with god of games</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body onload="onInitGame()" >
+    <h1>Minesweeper</h1>
+   
+    <div class="style" style="color: aqua;"></div>
+    <h2>Score: <span class="score">0</span></h2>
+    <table class="center">
+        <tbody class="game-board"></tbody>
+    </table>
+    
+    <button class="Restart" onclick="onInitGame()">Restart</button>
+    <button class="flag">⛳</button>
+    <script src="table.js"></script>
+</body>
+
+</html>
+
+<!-- onclick="onCellRightClicked(event, this.i, this.j) -->

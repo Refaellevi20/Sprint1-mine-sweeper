@@ -1,46 +1,104 @@
 
-body{
-  
-    margin: auto;
-    
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0; /* Light gray background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
 }
 
-h1{
+h1 {
     text-align: center;
+    color: #333; /* Dark text for contrast */
+    margin-bottom: 20px;
 }
+
 .center {
-    margin: 0 auto;
+    margin: 20px auto;
     border-collapse: collapse;
 }
 
 td {
     width: 50px;
     height: 50px;
-    border: 1px solid black;
-    transition: background-color 0.3s ease; /* transition effect only on background-color (for now maybe)*/
-    text-align: center; 
-     vertical-align: middle; /*the boom in the middle of the matrix */
-    font-size: 24px; 
+    border: 2px solid #333; /* Darker border */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 24px;
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 td:hover {
-    background-color: gray; /* color on hover */
-    /* cursor: not-allowed; */
+    background-color: #ddd; /* Lighter hover effect */
     cursor: pointer;
+    transform: scale(1.05); /* Slight scale on hover */
 }
 
-.revealed{
-    background-color: aqua;
+.revealed {
+    background-color: #87CEEB; /* Light aqua color for revealed tiles */
 }
 
 .selected {
     background-color: orange;
+    color: white;
 }
 
-
-.flag{
-    padding: 0px;
+.flag {
+    padding: 0;
     width: 50px;
     text-align: center;
-    transition: 1s;
+    cursor: pointer;
+}
+
+/* .tile-clicked {
+    background-color: #696969; /* Dark gray for clicked tiles */
+/*}
+
+.x1 { color: blue; }
+.x2 { color: #d93cd7; }
+.x3 { color: #1bcce7; }
+.x4 { color: #d45617; }
+.x5 { color: red; }
+.x6 { color: #0d0d0d; }
+.x7 { color: #fa29fa; }
+.x8 { color: #10ed3c; } */
+
+.difficult {
+    position: relative;
+    margin-bottom: 20px;
+    font-size: 16px;
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    background-color: #eee;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Button styling */
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+/* Timer and score styling */
+#timer, .score, .best-score, .life, .icon {
+    font-size: 18px;
+    margin-top: 10
 }

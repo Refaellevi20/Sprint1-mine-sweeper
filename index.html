@@ -9,17 +9,29 @@
 
 <body onload="onInitGame()">
     <h1>Minesweeper</h1>
-    <h2 class="score">0</h2>
+    <!-- <h2 class="score">0</h2> -->
     <table class="center">
         <tbody class="game-board"></tbody>
     </table>
-    <select onchange="onChangeDifficulty(this)">
+    <select class="difficult">
         <option value="4">Beginner</option>
         <option value="8">Medium</option>
         <option value="12">Expert</option>
     </select>
+    <div class="hints">
+        <button onclick="activateHint(this)">💡💡💡 </button>
+        <!-- <button onclick="activateHint()"> Hint 2</button>
+        <button onclick="activateHint()"> Hint 3</button> -->
+    </div>
+    
     <div class="timer" id="timer">Timer: 00 : 000</div>
-    <button class="Restart" onclick="onRestart()">Restart</button>
+    <button class="icon" onclick="onRestart()">😊</button>
+    <!-- <button class="life">Life</button> -->
+    <div class="life"></div>
+    <div class="score">score </div>
+    <div class="best-score">Best Score: 0</div>
+    <div class="light"></div>
+    <!-- <div class="icon">😊</div> -->
     <button class="flag">⛳</button>
     <script src="table.js"></script>
     <script src="util.js"></script>

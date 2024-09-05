@@ -203,3 +203,7 @@ button:hover {
 .hide {
     display: none;
 }
+
+p span {
+    color:purple
+}

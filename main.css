@@ -1,46 +1,69 @@
+* {
+    box-sizing: border-box;
+}
 
 body {
     margin: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #f0f0f0; /* Light gray background */
+    background-color: #f0f0f0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     flex-direction: column;
+    box-shadow: none;
+}
+
+.game-container {
+    width: 600px; /* Set the width */
+    height: 600px; /* Set the height to make it a square */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: auto;
+    position: relative; /* Ensure container is positioned for scaling */
 }
 
 h1 {
     text-align: center;
-    color: #333; /* Dark text for contrast */
-    margin-bottom: 20px;
+    color: #939393;
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff, 0 0 50px #ff00ff, 0 0 60px #ff00ff, 0 0 70px #ff00ff;
 }
 
 .center {
     margin: 20px auto;
     border-collapse: collapse;
+    max-height: 100%; /* Ensure it respects the container's height */
+}
+
+table {
+    border-spacing: 0;
+    max-height: 100%;
+    overflow: auto;
 }
 
 td {
-    width: 50px;
-    height: 50px;
-    border: 2px solid #333; /* Darker border */
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 30px; /* Adjusted size for better fit */
+    height: 30px; /* Adjusted size for better fit */
+    border: 1px solid #999;
+    background-color: #C0C0C0;
+    transition: background-color 0.1s ease;
     text-align: center;
     vertical-align: middle;
-    font-size: 24px;
-    border-radius: 5px; /* Rounded corners */
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 16px; /* Adjusted font size */
+    cursor: pointer;
+    color: #333;
 }
 
 td:hover {
-    background-color: #ddd; /* Lighter hover effect */
-    cursor: pointer;
-    transform: scale(1.05); /* Slight scale on hover */
+    background-color: #dcdcdc;
 }
 
 .revealed {
-    background-color: #87CEEB; /* Light aqua color for revealed tiles */
+    background-color: #87CEEB;
 }
 
 .selected {
@@ -48,39 +71,23 @@ td:hover {
     color: white;
 }
 
-.flag {
-    padding: 0;
-    width: 50px;
-    text-align: center;
-    cursor: pointer;
-}
-
-/* .tile-clicked {
-    background-color: #696969; /* Dark gray for clicked tiles */
-/*}
-
-.x1 { color: blue; }
-.x2 { color: #d93cd7; }
-.x3 { color: #1bcce7; }
-.x4 { color: #d45617; }
-.x5 { color: red; }
-.x6 { color: #0d0d0d; }
-.x7 { color: #fa29fa; }
-.x8 { color: #10ed3c; } */
-
 .difficult {
     position: relative;
     margin-bottom: 20px;
     font-size: 16px;
-    padding: 8px;
+    padding: 10px;
     border: none;
     border-radius: 5px;
     background-color: #eee;
     cursor: pointer;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s;
 }
 
-/* Button styling */
+.difficult:hover {
+    background-color: #ddd;
+}
+
 button {
     padding: 10px 20px;
     font-size: 16px;
@@ -89,7 +96,7 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s;
 }
 
@@ -97,8 +104,102 @@ button:hover {
     background-color: #555;
 }
 
-/* Timer and score styling */
-#timer, .score, .best-score, .life, .icon {
+#timer,
+.score,
+.best-score,
+.life,
+.icon {
     font-size: 18px;
-    margin-top: 10
+    margin-top: 10px;
+}
+
+.board-disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.hints {
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.hints button {
+    font-size: 18px;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    background-size: 2000px 100%;
+    animation: 1s ease-out;
+    background: linear-gradient(90deg, rgba(237, 248, 19, 0.5) 0%, rgba(255,255,255,0) 100%);
+}
+
+.hints button:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+.scores {
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
+    padding: 5px 0;
+}
+
+.best-score,
+.score {
+    font-size: 18px;
+}
+
+.score {
+    text-align: right;
+}
+
+.icon-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.icon {
+    font-size: 25px;
+    padding: 10px 10px;
+    background-color: #2b9ffe;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.icon:hover {
+    background-color: #e11a1a;
+}
+
+.bottom-side {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: auto;
+    padding: 15px;
+}
+
+.flag {
+    padding: 0;
+    width: 50px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.life {
+    font-size: 18px;
+}
+
+.hide {
+    display: none;
 }

@@ -2,7 +2,7 @@
 //* doest work with use strict
 //* took hours to figurte
 
-
+const EMPTY = ''
 const BOOM = '💣'
 const FLAG = '⛳'
 
@@ -10,27 +10,38 @@ const FLAG = '⛳'
 const levels = {
     4: { size: 4, mines: 2 },
     8: { size: 8, mines: 14 },
-    12: { size: 12, mines: 32 }
+    12: { size: 12, mines: 32 },
+    16: { size: 16, mines: 44 },
+    20: { size: 20, mines: 56 }
 }
 //* g global
+var gEndGame = false
 var gBoard
 var gBoomCount = 0
 var gIntervalAdjacentMines
 var gFirstClick = true
 var gMaxLife = 3
 var gScore = 0
-var gHints = 3
-var gHintActive = false
+var gScoreAllTimes = 0
+
+var gHint1 = false
+var gHint2 = false
+var gHint3 = false
+
 
 var timerInterval
 var startTime
 var gGameOver = false
 
-// '💗'
+//const life = '💗' , '💗'
+
+
+
 // '💡'
 //* active the function from the html
 function onInitGame() {
     //* every time i start the game i want them to start from the arigonal numbers
+    gEndGame = false
     gScore = 0
     gMaxLife = 3
     updateLife(gMaxLife)
@@ -48,8 +59,9 @@ function onInitGame() {
     updateIcon(1)
     renderBoard(gBoard)
     stopTimer()
+    
+   // loadBestScore(selectedSize)
 }
-
 
 function placeMines(minesCount) {
     var placedMines = 0
@@ -109,7 +121,7 @@ function renderBoard(board) {
             var cellContent = ''
             //* mine is the boom (not really)
             if (cell.revealed) {
-                cellContent = cell.mine ? BOOM : cell.adjacentMines || ''
+                cellContent = cell.mine ? BOOM : (cell.adjacentMines || EMPTY)
             } else if (cell.flagged) {
                 cellContent = FLAG
             }
@@ -172,21 +184,47 @@ function countNeighbors(row, col, board) {
     }
     return mineCount
 }
-//* the score does not work yet
+
 function onCellClicked(event, i, j) {
+
+    if(gEndGame)
+        return
+    
 
     const cell = gBoard[i][j]
     if (cell.revealed || cell.flagged) return
-
+   
     //* If hint mode is active, reveal the cell and neighbors for 1 second
-    if (gHintActive) {
+    if (gHint1 || gHint2 || gHint3) {
         revealHint(i, j)
         setTimeout(() => {
             hideHint(i, j)
-            gHintActive = false;
+            gHint1 = false 
+            gHint2 = false 
+            gHint3 = false 
+
         }, 1000)
+      //  gHint1
         return
     }
+    // if (gHint2) {
+    //     revealHint(i, j)
+    //     setTimeout(() => {
+    //         hideHint(i, j)
+    //         gHint2 = false
+    //     }, 1000)
+    //  //   gHint2
+    //     return
+    // }
+    // if (gHint3) {
+    //     revealHint(i, j)
+    //     setTimeout(() => {
+    //         hideHint(i, j)
+    //         gHint3 = false
+    //     }, 1000)
+    //   //  gHint3
+    //     return
+    // }
 
     updateLife(gMaxLife)
     startTimer()
@@ -215,6 +253,7 @@ function onCellClicked(event, i, j) {
 
         } else {
             gameOver(false)
+            
             return
         }
     } else {
@@ -228,6 +267,10 @@ function onCellClicked(event, i, j) {
         //* score add only  when i click on cell.adjacentMines also update the score
         if (cell.adjacentMines) {
             gScore++
+            if(gScore > gScoreAllTimes){
+                gScoreAllTimes = gScore
+                updateBestScore(gScoreAllTimes)
+            }
             updateScore(gScore)
         }
 
@@ -253,50 +296,40 @@ function onCellRightClicked(event, i, j) {
 }
 //* the game is finish when 
 function gameOver(isWin) {
-
-    clearInterval(timerInterval)
-    stopTimer()
-    gGameOver = true
+    gGameOver = true;
     if (isWin) {
         clearInterval(timerInterval)
         stopTimer()
         revealAllMines()
-
-        gGameOver = true
         updateIcon(2)
         alert('Victorious!')
-
-        //*select is from the html and
-        //* the value  Retrieves the currently selected value from the-> <select> element 
-        //* Converts the selected value (which is a string) into an integer using parseInt
-        // debugger 
-        const selectSize = parseInt(document.querySelector('select').value)
-        updateBestScore(selectSize, gScore)
-
+      
+        gEndGame = true
     } else {
-        if (gMaxLife === 0) {
-            clearInterval(timerInterval)
+        if (gMaxLife === 1) {
+          //  clearInterval(timerInterval)
             stopTimer()
-
             revealAllMines()
-
             updateIcon(0)
+            gEndGame = true
             alert('Game over! You lost.')
+            //* when the game over go to every cell and reveal
+          
+            renderBoard(gBoard)
         } else {
             gMaxLife--
             updateLife(gMaxLife)
         }
-
-
     }
 }
+
 //* check victory if i won by finding all the mines
 //* means i open all the cell except mine and empty cells
 function checkVictory() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[i].length; j++) {
             const cell = gBoard[i][j]
-            if ((cell.mine && !cell.flagged) || (!cell.mine && !cell.revealed)) return false
+            if ((!cell.mine && cell.flagged) || (!cell.mine && !cell.revealed)) return false
         }
     }
     return true
@@ -307,6 +340,7 @@ function revealAllMines() {
         for (var j = 0; j < gBoard[i].length; j++) {
             if (gBoard[i][j].mine) {
                 gBoard[i][j].revealed = true
+                 renderCell({i, j}, BOOM)
             }
         }
     }
@@ -318,6 +352,7 @@ function onRestart() {
     gMaxLife = 3
     gScore = 0
     gFirstClick = true
+    gHints = 3
     gGameOver = false
     onInitGame()
 
@@ -334,6 +369,7 @@ function startTimer() {
     }, 10)
 }
 
+
 //* after i win or lose 
 function stopTimer() {
     clearInterval(timerInterval)
@@ -342,7 +378,7 @@ function stopTimer() {
 
 
 function updateLife(gMaxLife) {
-    document.querySelector('.life').innerText = `ives ${gMaxLife}`
+    document.querySelector('.life').innerText = `lives ${gMaxLife}`
 }
 
 function updateIcon(state) {
@@ -356,7 +392,14 @@ function updateIcon(state) {
 
 function updateScore(score) {
     document.querySelector('.score').innerText = `score  ${score}`
+
 }
+function updateBestScore(bScore) {
+    document.querySelector('.best-score').innerText = `Best Score  ${bScore}`
+
+}
+
+
 
 //*  a few second reveal your self and your nebs
 function revealHint(row, col) {
@@ -377,26 +420,45 @@ function hideHint(row, col) {
         if (i < 0 || i >= gBoard.length) continue
         for (var j = col - 1; j <= col + 1; j++) {
             if (j < 0 || j >= gBoard[0].length) continue
-            if (!gBoard[i][j].mine) {
+           
                 gBoard[i][j].revealed = false
                 //* Hide cell again if not a mine
-            }
+         
         }
     }
     renderBoard(gBoard)
 }
+//* i know there is a better way with loop 
+function activateHint1() {
+        gHint1 = 'used'
+        updateHint1Display()
+}
 
-function activateHint() {
-    if (gHints > 0 && !gHintActive) {
-        gHintActive = true
-        gHints--
-        updateHintDisplay()
-    }
+function activateHint2() {
+        gHint2 = 'Used'
+        updateHint2Display()
+
 }
+
+function activateHint3() {
+        gHint3 = 'used'
+        updateHint3Display()
+
+}
+
 //* i want to update every time i click on light 
-function updateHintDisplay() {
-    document.querySelector('.hints').innerText = `Hints left: ${gHints}`
+function updateHint1Display() {
+    document.querySelector('.hint1').innerText = `${gHint1}`
+   // const el = document.querySelector(selector)
+    document.querySelector('.hint1').style.display === 'hide'
 }
+function updateHint2Display() {
+    document.querySelector('.hint2').innerText = `${gHint2}`
+}
+function updateHint3Display() {
+    document.querySelector('.hint3').innerText = `${gHint3}`
+}
+
 //* if i clicked on empty cell only empty and he has neighborCell he open them too
 //* u can play and see foe your self. wow!
 //* like who is the open negs 
@@ -419,35 +481,3 @@ function fullExpand(row, col) {
     }
 }
 
-
-
-//~ localStorage.setItem('score', timeDiff.toFixed(3));
-//~ parseFloat(document.getElementById("best_score").innerHTML = "My best time is " + localStorage.getItem('score') + " s")
-//^ from google to understad how to do it 
-//& for every level i want to have best score 
-//?  do i have to update every level - ofc i am 
-function updateBestScore(level, score) {
-    //* This retrieves the current best score for the specified level from the browser's 
-    const bestScore = localStorage.setItem(`bestScore ${level}`)
-    if (!bestScore || score < bestScore) {
-        localStorage.setItem(`bestScore ${level}`, score)
-        //* replace to the best score if the score is bigger
-        document.querySelector('.best-score').innerText = `bestScore `
-
-    }
-}
-//* the best score for the level
-function loadBestScore(level) {
-    const bestScore = localStorage.setItem(`bestScore ${level}`)
-    //* only if he already have a bestScore i want to update it so
-    if (bestScore) {
-        document.querySelector('.best-score').innerText = `bestScore ${bestScore}`
-    } else {
-        document.querySelector('score-score').innerText = `bestScore : none`
-    }
-}
-
-// TODO only when we have a winner we have also best score
-//& well lets check
-//~ I believe i should to change it
-//^ not working Grrrrrrrr

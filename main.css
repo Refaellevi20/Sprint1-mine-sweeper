@@ -2,10 +2,14 @@
     box-sizing: border-box;
 }
 
+:root {
+    --dark-color: #000; 
+}
+
 body {
     margin: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #f0f0f0;
+    background: linear-gradient(135deg, #667eea, #764ba2); 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,16 +19,29 @@ body {
 }
 
 .game-container {
-    width: 600px; /* Set the width */
-    height: 600px; /* Set the height to make it a square */
+    width: 600px; 
+    height: auto; 
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: #ffffff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); 
+    padding: 20px;
     overflow: auto;
-    position: relative; /* Ensure container is positioned for scaling */
+    position: relative; 
+    animation: sparkle 3s infinite ease-in-out; 
+}
+
+/* from google */
+
+@keyframes sparkle {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(255, 0, 255, 0.5), 0 0 40px rgba(255, 0, 255, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(255, 255, 0, 0.7), 0 0 60px rgba(255, 255, 0, 0.4);
+    }
 }
 
 h1 {
@@ -36,24 +53,21 @@ h1 {
 .center {
     margin: 20px auto;
     border-collapse: collapse;
-    max-height: 100%; /* Ensure it respects the container's height */
 }
 
 table {
     border-spacing: 0;
-    max-height: 100%;
-    overflow: auto;
 }
 
 td {
-    width: 30px; /* Adjusted size for better fit */
-    height: 30px; /* Adjusted size for better fit */
+    width: 30px;
+    height: 30px;
     border: 1px solid #999;
     background-color: #C0C0C0;
     transition: background-color 0.1s ease;
     text-align: center;
     vertical-align: middle;
-    font-size: 16px; /* Adjusted font size */
+    font-size: 16px;
     cursor: pointer;
     color: #333;
 }
@@ -88,6 +102,7 @@ td:hover {
     background-color: #ddd;
 }
 
+
 button {
     padding: 10px 20px;
     font-size: 16px;
@@ -105,17 +120,11 @@ button:hover {
 }
 
 #timer,
-.score,
 .best-score,
 .life,
-.icon {
+.score{
     font-size: 18px;
     margin-top: 10px;
-}
-
-.board-disabled {
-    pointer-events: none;
-    opacity: 0.5;
 }
 
 .hints {
@@ -135,12 +144,7 @@ button:hover {
     transition: background-color 0.3s, border-color 0.3s;
     background-size: 2000px 100%;
     animation: 1s ease-out;
-    background: linear-gradient(90deg, rgba(237, 248, 19, 0.5) 0%, rgba(255,255,255,0) 100%);
-}
-
-.hints button:hover {
-    background-color: #e0e0e0;
-    border-color: #ccc;
+    background: linear-gradient(145deg, #FFD700, #FFC300, #E5A200)
 }
 
 .scores {
@@ -155,29 +159,20 @@ button:hover {
     font-size: 18px;
 }
 
-.score {
-    text-align: right;
-}
-
-.icon-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
 .icon {
-    font-size: 25px;
-    padding: 10px 10px;
-    background-color: #2b9ffe;
-    color: #fff;
+    font-size: 30px;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s;
+    width: auto;
+    height: auto;
 }
 
 .icon:hover {
-    background-color: #e11a1a;
+    background-color: transparent; 
 }
 
 .bottom-side {
@@ -200,10 +195,12 @@ button:hover {
     font-size: 18px;
 }
 
-.hide {
-    display: none;
+p span {
+    color: purple;
 }
 
-p span {
-    color:purple
-}
+
+
+
+
+

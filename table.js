@@ -1,6 +1,6 @@
-// 'use strict'
+//  'use strict'
 //* doest work with use strict
-//* took hours to figurte
+//* took hours to figure
 
 const EMPTY = ''
 const BOOM = '💣'
@@ -23,7 +23,7 @@ var gFirstClick = true
 var gMaxLife = 3
 var gScore = 0
 var gScoreAllTimes = 0
-
+var gSafeClicks = 3
 var gHint1 = false
 var gHint2 = false
 var gHint3 = false
@@ -33,19 +33,20 @@ var timerInterval
 var startTime
 var gGameOver = false
 
-//const life = '💗' , '💗'
+//const life = '💗💗💗'
+// toString.gMaxLife
 
-
-
-// '💡'
 //* active the function from the html
 function onInitGame() {
     //* every time i start the game i want them to start from the arigonal numbers
     gEndGame = false
     gScore = 0
     gMaxLife = 3
+    gSafeClicks = 3
+
     updateLife(gMaxLife)
-    // updateScore(1)
+
+    updateSafeClickDisplay()
 
     //* element in your HTML is used to allow the user to choose a difficulty level ( Beginner, Medium, Expert)
     //* property retrieves the current value of the selected option in the select
@@ -59,8 +60,8 @@ function onInitGame() {
     updateIcon(1)
     renderBoard(gBoard)
     stopTimer()
-    
-   // loadBestScore(selectedSize)
+
+    // loadBestScore(selectedSize)
 }
 
 function placeMines(minesCount) {
@@ -76,8 +77,6 @@ function placeMines(minesCount) {
         }
     }
 }
-
-
 
 function buildBoard(size) {
     const board = []
@@ -106,7 +105,6 @@ function boomRandomLocations() {
         j: Math.floor(Math.random() * size)
     }
 }
-
 
 function renderBoard(board) {
     //* Initializes an empty string strHtml
@@ -139,15 +137,12 @@ function renderBoard(board) {
     elGameBoard.innerHTML = strHtml
 }
 
-
 //* location is an object like this - { i: 2, j: 7 }
 function renderCell(location, value) {
     //* Select the elCell and set the value
     const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
     elCell.innerHTML = value
 }
-
-// 
 
 //* checking 
 function setMinesNegsCount(board) {
@@ -187,24 +182,24 @@ function countNeighbors(row, col, board) {
 
 function onCellClicked(event, i, j) {
 
-    if(gEndGame)
+    if (gEndGame)
         return
-    
+
 
     const cell = gBoard[i][j]
     if (cell.revealed || cell.flagged) return
-   
+
     //* If hint mode is active, reveal the cell and neighbors for 1 second
     if (gHint1 || gHint2 || gHint3) {
         revealHint(i, j)
         setTimeout(() => {
             hideHint(i, j)
-            gHint1 = false 
-            gHint2 = false 
-            gHint3 = false 
+            gHint1 = false
+            gHint2 = false
+            gHint3 = false
 
         }, 1000)
-      //  gHint1
+        //  gHint1
         return
     }
     // if (gHint2) {
@@ -253,7 +248,7 @@ function onCellClicked(event, i, j) {
 
         } else {
             gameOver(false)
-            
+
             return
         }
     } else {
@@ -267,7 +262,7 @@ function onCellClicked(event, i, j) {
         //* score add only  when i click on cell.adjacentMines also update the score
         if (cell.adjacentMines) {
             gScore++
-            if(gScore > gScoreAllTimes){
+            if (gScore > gScoreAllTimes) {
                 gScoreAllTimes = gScore
                 updateBestScore(gScoreAllTimes)
             }
@@ -294,6 +289,7 @@ function onCellRightClicked(event, i, j) {
     cell.flagged = !cell.flagged
     renderBoard(gBoard)
 }
+
 //* the game is finish when 
 function gameOver(isWin) {
     gGameOver = true;
@@ -303,18 +299,18 @@ function gameOver(isWin) {
         revealAllMines()
         updateIcon(2)
         alert('Victorious!')
-      
+
         gEndGame = true
     } else {
         if (gMaxLife === 1) {
-          //  clearInterval(timerInterval)
+            //  clearInterval(timerInterval)
             stopTimer()
             revealAllMines()
             updateIcon(0)
             gEndGame = true
             alert('Game over! You lost.')
             //* when the game over go to every cell and reveal
-          
+
             renderBoard(gBoard)
         } else {
             gMaxLife--
@@ -334,18 +330,20 @@ function checkVictory() {
     }
     return true
 }
+
 //* if i hit one mine i can see all the mine and i also lost
 function revealAllMines() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[i].length; j++) {
             if (gBoard[i][j].mine) {
                 gBoard[i][j].revealed = true
-                 renderCell({i, j}, BOOM)
+                renderCell({ i, j }, BOOM)
             }
         }
     }
     renderBoard(gBoard)
 }
+
 //* starting a new game
 function onRestart() {
     stopTimer()
@@ -369,16 +367,14 @@ function startTimer() {
     }, 10)
 }
 
-
 //* after i win or lose 
 function stopTimer() {
     clearInterval(timerInterval)
     timerInterval = null
 }
 
-
 function updateLife(gMaxLife) {
-    document.querySelector('.life').innerText = `lives ${gMaxLife}`
+    document.querySelector('.life').innerText = `lives ${gMaxLife} 💗`
 }
 
 function updateIcon(state) {
@@ -394,12 +390,11 @@ function updateScore(score) {
     document.querySelector('.score').innerText = `score  ${score}`
 
 }
-function updateBestScore(bScore) {
-    document.querySelector('.best-score').innerText = `Best Score  ${bScore}`
+
+function updateBestScore(gScore) {
+    document.querySelector('.best-score').innerText = `Best Score  ${gScore}`
 
 }
-
-
 
 //*  a few second reveal your self and your nebs
 function revealHint(row, col) {
@@ -407,6 +402,7 @@ function revealHint(row, col) {
         if (i < 0 || i >= gBoard.length) continue
         for (var j = col - 1; j <= col + 1; j++) {
             if (j < 0 || j >= gBoard[0].length) continue
+            //   if (cell.revealed && cell.mine && cell.adjacentMines) return false
             gBoard[i][j].revealed = true
         }
     }
@@ -420,41 +416,43 @@ function hideHint(row, col) {
         if (i < 0 || i >= gBoard.length) continue
         for (var j = col - 1; j <= col + 1; j++) {
             if (j < 0 || j >= gBoard[0].length) continue
-           
-                gBoard[i][j].revealed = false
-                //* Hide cell again if not a mine
-         
+            gBoard[i][j].revealed = false
         }
     }
     renderBoard(gBoard)
 }
 //* i know there is a better way with loop 
 function activateHint1() {
-        gHint1 = 'used'
-        updateHint1Display()
+    document.querySelector('.hint1').style.display = gHint1 ? 'block' : 'none';
+    gHint2 = 'Used'
+    updateHint1Display()
 }
 
 function activateHint2() {
-        gHint2 = 'Used'
-        updateHint2Display()
+    document.querySelector('.hint2').style.display = gHint1 ? 'block' : 'none';
+    gHint2 = 'Used'
+    updateHint2Display()
 
 }
 
 function activateHint3() {
-        gHint3 = 'used'
-        updateHint3Display()
+    document.querySelector('.hint3').style.display = gHint1 ? 'block' : 'none';
+    gHint3 = 'used'
+    updateHint3Display()
 
 }
 
 //* i want to update every time i click on light 
 function updateHint1Display() {
     document.querySelector('.hint1').innerText = `${gHint1}`
-   // const el = document.querySelector(selector)
-    document.querySelector('.hint1').style.display === 'hide'
+    // const el = document.querySelector(selector)
+    //  document.querySelector('.hint1').style.display === 'hide'
 }
+
 function updateHint2Display() {
     document.querySelector('.hint2').innerText = `${gHint2}`
 }
+
 function updateHint3Display() {
     document.querySelector('.hint3').innerText = `${gHint3}`
 }
@@ -472,7 +470,7 @@ function fullExpand(row, col) {
             const neighborCell = gBoard[i][j]
             if (!neighborCell.revealed && !neighborCell.mine) {
                 neighborCell.revealed = true
-                //* If the neighbor is also empty (no adjacent mines), expand further
+                //* If the neighbor is also empty (no adjacent 0r  mines), expand further
                 if (neighborCell.adjacentMines === 0) {
                     fullExpand(i, j)
                 }
@@ -481,3 +479,42 @@ function fullExpand(row, col) {
     }
 }
 
+function useSafeClick() {
+    if (gSafeClicks <= 0 || gEndGame) return
+
+    gSafeClicks--
+    updateSafeClickDisplay()
+    const safeCell = getRandomSafeCell()
+    if (safeCell) {
+
+        const { i, j } = safeCell
+        const cell = gBoard[i][j]
+        cell.revealed = true
+        renderCell({ i, j }, '🛟')
+
+        setTimeout(() => {
+            cell.revealed = false
+            renderBoard(gBoard)
+        }, 1500)
+    }
+}
+
+function getRandomSafeCell() {
+    const coveredCells = []
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[i].length; j++) {
+            const cell = gBoard[i][j]
+            if (!cell.revealed && !cell.mine) {
+                coveredCells.push({ i, j })
+            }
+        }
+    }
+
+    if (coveredCells.length === 0) return null
+    const randomIndex = Math.floor(Math.random() * coveredCells.length)
+    return coveredCells[randomIndex]
+}
+
+function updateSafeClickDisplay() {
+    document.querySelector('.safeClick span').innerText = `Safe Click: ${gSafeClicks}🛟`
+}
